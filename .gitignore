@@ -1,0 +1,11 @@
+# KiCad local UI state and regenerable footprint cache
+*.kicad_prl
+fp-info-cache
+~*.lck
+_autosave-*
+# Private backups must never be included in the public distribution.
+*-backups/
+*.kicad_sch_old
+*.kicad_pcb_old
+# Local review notes (not part of the public distribution)
+/docs/

@@ -1,0 +1,63 @@
+# Modula
+
+Modulaは、共同開発したMeKaBuの後継となるモジュール式キーボードです。MeKaBuのモジュールを再利用する構想を引き継ぎ、Modula向けにも新しいモジュールを開発しています。
+
+このリポジトリには、**左右の本体基板のKiCad設計・製造用出力と、筐体のSTEP・3MF**を収録しています。ファームウェアは同じGitHub組織の [zmk-config-Modula](https://github.com/Modula-Zaurus/zmk-config-Modula) を参照してください。設計の閲覧や改良の出発点として利用できます。ただし、本リポジトリには外部CADライブラリ、全体の部品表、組立手順が揃っておらず、この一式だけで完成品を再現できる状態ではありません。
+
+## 収録範囲
+
+| 対象 | 設計・交換データ | 製造用出力・関連資料 | 確認状況 |
+| --- | --- | --- | --- |
+| 左本体基板 | [KiCadプロジェクト](electrical/Shield_L/Shield_L.kicad_pro)、[回路図](electrical/Shield_L/Shield_L.kicad_sch)、[基板](electrical/Shield_L/Shield_L.kicad_pcb)、[STEP](electrical/Shield_L/Shield_L_Modula.step) | [Gerber ZIP](electrical/Shield_L/jlcpcb/production_files/GERBER-Shield_L.zip)、[実装用BOM](electrical/Shield_L/jlcpcb/production_files/BOM-Shield_L.csv)、[CPL](electrical/Shield_L/jlcpcb/production_files/CPL-Shield_L.csv) | 静的検証で警告あり。実機動作記録なし |
+| 右本体基板 | [KiCadプロジェクト](electrical/Shield_R/Shield_R.kicad_pro)、[回路図](electrical/Shield_R/Shield_R.kicad_sch)、[基板](electrical/Shield_R/Shield_R.kicad_pcb)、[STEP](electrical/Shield_R/Shield_R_Modula.step) | [Gerber ZIP](electrical/Shield_R/jlcpcb/production_files/GERBER-Shield_R.zip)、[実装用BOM](electrical/Shield_R/jlcpcb/production_files/BOM-Shield_R.csv)、[CPL](electrical/Shield_R/jlcpcb/production_files/CPL-Shield_R.csv) | 静的検証で警告あり。実機動作記録なし |
+| 左筐体 | [Left](mechanical/Left)：トッププレートv2_3、ボトムケースv2_7 | STEP | 元CADの履歴・拘束は未収録 |
+| 右筐体 | [Right](mechanical/Right)：トッププレートv2_4、ボトムケースv2_8 | STEP | 元CADの履歴・拘束は未収録 |
+| 共通部品 | [Common](mechanical/Common)：ノブ、スペーサー、ブロック、左右マイコンカバー、電源・リセット操作部 | STEP | ファイル名で数量指定のあるスペーサー・ブロックは左右合計各8個。実物との照合は未実施 |
+| FDM印刷用プロジェクト | [Modula_FDM.3mf](mechanical/Modula_FDM.3mf) | Bambu Studioの設定・メッシュ・プレビューを内包 | 実際のプリンター・材料に合わせた確認が必要 |
+
+`electrical/` は電気設計、`mechanical/` は機械設計の交換・印刷データです。バックアップ・旧回路図は公開対象に含めません。
+
+## 拡張モジュールとMeKaBu互換性
+
+[写真付きの新規開発モジュール紹介](https://buymeacoffee.com/bparound30s/modula5)では、次の5点を紹介しています（名称は開発者提供情報に基づきます）。
+
+| モジュール | このリポジトリ内の対応設計 |
+| --- | --- |
+| 19mm低背トラックボール | 設計データは現在非公開 |
+| マウスユニット（左右・中クリック、スクロールエンコーダー） | 同上 |
+| 11mmステンレストラックボール＋エンコーダー | 同上 |
+| センタープッシュ付きLR回路付きエンコーダー | 同上 |
+| LED透過光付きアルチザンキーキャップ用モジュール | 同上 |
+
+これらの拡張モジュールは意図的に公開対象から外しています。今後の公開は、Buy Me a Coffeeでの支援状況と、開発者の意欲・作業状況に応じて判断します。支援は公開や公開時期を保証するものではありません。
+
+MeKaBuとの互換性については、対象モジュールの版、コネクターの向き・ピン配置、電源電圧、機械寸法、対応ファームウェアの組合せを示す検証表が未収録です。全モジュールの互換性や動作を保証するものではありません。
+
+## 設計を開く・製造を準備する
+
+1. 左右それぞれの `.kicad_pro` をKiCadで開きます。収録回路図はKiCad 9.0形式、既存Gerberは9.0.7で生成されています。
+2. カスタムライブラリは本リポジトリに未同梱です。開発者のComponentsフォルダーには主要フットプリント5種が存在しますが、左右回路図の `mcu:xiao-ble`・`switch:SKRHA`、PCBの `kbd_Hole:m2_Screw_Hole` は外部ライブラリ参照が未解決です。これらの形状・シンボルは設計ファイル内に保持されています。ライブラリからの更新には参照先の復元が必要です。スライドスイッチの標準3Dモデル参照1種も未解決です。
+3. ERC・DRCと回路図／基板の整合性を確認します。2026-11-12のKiCad 9.0.7による検証では、DRC警告は左64件・右7件、回路図との整合性警告は左80件・右30件、ERC警告は左右各6件でした。左には基板端クリアランス警告8件を含みます。設計意図を確認してから修正し、製造データを同じ版から出し直してください。
+4. Gerberとドリルをビューアーで確認し、BOM・CPLと部品面・原点・回転を照合します。収録Gerber ZIPと展開済み出力は一致していますが、現在のPCBとの版の一致は未確認です。Gerberの日付は左右とも2026-05-02です。
+5. **収録BOMは各側1N4148ダイオード40個の実装用リストです。** MCU、スイッチ、ソケット、コネクター、電源、ねじなどを含む完成品の調達表ではありません。全体BOMの確定後に発注してください。
+6. 筐体はSTEP対応CADで閲覧・編集するか、3MFをBambu Studioで開き、配置と印刷条件を確認します。3MFの生成アプリ記録はBambuStudio-02.07.01.62です。基板との干渉、ねじ、材料収縮、印刷方向の実機検証は未実施です。
+
+2026-11-12に現行左右PCBからGerber各7層とPTH／NPTHドリルを正常に出力できることを確認しました。外部ライブラリの不足自体は裸基板の発注を妨げません。ただし、出力成功は製造品質・動作の保証ではなく、警告・製造条件・採用版の確認が必要です。検証出力で既存の製造データを置き換えてはいません。
+
+組立順、配線、電源の接続条件、締結部品、完成検査の手順は本リポジトリに未収録です。
+
+## ファームウェア
+
+ファームウェアは [Modula-Zaurus/zmk-config-Modula](https://github.com/Modula-Zaurus/zmk-config-Modula) で別管理しています。利用方法・ビルド設定・配布状況・ライセンスは、リンク先の案内を確認してください。本リポジトリにはファームウェアを同梱しません。製作する基板・モジュール構成と対応版を照合して使用してください。
+
+## ライセンスと出典
+
+自作ハードウェア設計には、既存の [CERN-OHL-W v2（LICENCE）](LICENCE)を維持します。対象は `electrical/` と `mechanical/` の自作設計およびその出力です。権利・出典確認は、所有者による個別の確認と記録の保管に基づき完了しています。第三者素材の既存条件・表示は維持します。第三者素材、ファームウェア、文書・画像に一律に再許諾する宣言ではありません。
+
+第三者もライセンス条件に従って製造・販売できます。製品に対応するComplete Sourceまたはその入手先を購入者へ案内し、改変した対象設計のライセンス・変更表示などの条件を守ってください。作者への支援は販売許可の対価ではありません。販売者による製造・検査・購入者対応と、元の設計者の活動を区別し、作者公認・保証付きと誤認させない表示にしてください。詳細な条件はライセンス本文を参照してください。
+
+## 開発を支援する
+
+[BPのBuy Me a Coffeeで開発を支援する](https://buymeacoffee.com/bparound30s)
+
+支援は開発活動への任意の応援です。部品購入、基板・筐体・機構の試作、動作検証、公開資料の整備に役立てます。完成品の購入・予約や、個別技術サポートの提供を伴うものではありません。
